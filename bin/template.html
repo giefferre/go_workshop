@@ -1,11 +1,44 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>Go is your friend</title>
-	</head>
+    <head>
+        <meta charset="utf-8" />
+        <title>Golang Chat Roulette</title>
+    </head>
+    <body>
+        <h1>Welcome to Golang Chat Roulette</h1>
 
-	<body>
-		<h1>Welcome</h1>
+        <textarea name="chat" id="chat" cols="40" rows="10"></textarea>
 
-		<p>Hello {{.Name}} {{.Surname}}</p>
-	</body>
+        <p>
+        	<input type="text" id="message" />
+        	<button id="send">send</button>
+        </p>
+
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script>
+            $(document).ready(function(){
+
+            	$("#send").click(function(e){
+            		e.preventDefault();
+
+            		var message = $("#message").val();
+            		$("#chat").html( $("#chat").html() + "\n> " + message);
+            		websocket.send(message);
+            	});
+
+                function onMessage(aMessage){
+                    $("#chat").html( $("#chat").html() + "\n< " + aMessage.data );
+                }
+
+                function onClose(){
+                    $("#chat").html( $("#chat").html() + "\n\n -- Connection closed -- " );
+                }
+
+                websocket = new WebSocket("ws://{{.}}/socket");
+                websocket.onmessage = onMessage;
+                websocket.onclose = onClose;
+            });
+        </script>
+    </body>
 </html>
